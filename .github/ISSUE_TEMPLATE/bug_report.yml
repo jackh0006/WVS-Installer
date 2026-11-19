@@ -1,0 +1,56 @@
+name: Bug report
+description: Something is broken or behaves differently than documented.
+title: "[bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Never paste your password or the contents of `vps.conf`.**
+        Run `vps status` and `vps test` first — both are safe to share.
+  - type: input
+    id: version
+    attributes:
+      label: WVS Installer version
+      description: Output of `./vps-setup.sh --version`
+      placeholder: "2.0.0"
+    validations:
+      required: true
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution and version
+      placeholder: "Ubuntu 24.04, Fedora 41, Arch rolling…"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: The exact message, in a code block if possible.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: outputs
+    attributes:
+      label: Diagnostic output
+      description: Paste `vps status` and `vps test` here.
+      render: text
+    validations:
+      required: false

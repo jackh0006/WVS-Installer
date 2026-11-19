@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+
+      - name: Bash syntax
+        run: |
+          bash -n vps-setup.sh
+          bash -n install.sh
+          bash -n tests/run-tests.sh
+
+      - name: ShellCheck
+        run: shellcheck -S info vps-setup.sh install.sh tests/run-tests.sh
+
+      - name: File hygiene
+        run: |
+          test -x vps-setup.sh
+          test -x install.sh
+          test -x tests/run-tests.sh
+          if grep -rIl $'\r' --include='*.sh' --include='*.md' --include='*.yml' .; then
+            echo "CRLF line endings found"; exit 1
+          fi
+
+  tests:
+    name: Functional tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run the suite
+        run: bash tests/run-tests.sh
+
+  version:
+    name: Version consistency
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Script version is in the changelog
+        run: |
+          version=$(bash vps-setup.sh --version | awk '{print $2}')
+          echo "vps-setup.sh version: $version"
+          grep -q "^## \[$version\]" CHANGELOG.md
+          echo "OK"

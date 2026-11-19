@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest an improvement.
+title: "[feat]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: Describe the situation, not only the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Compatibility
+      options:
+        - label: It can be implemented without new runtime dependencies
+        - label: It keeps the three-question installation flow
+        - label: It does not require telemetry or an account
